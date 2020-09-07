@@ -37,15 +37,13 @@ int listaVazia(CELULA **lista){
 
 PESSOA removerInicio(CELULA **lista){
 
-    //Ponteiro p/ armazenar o end. da cÈlula a ser excluÌda.
+    //Ponteiro p/ armazenar o end. da c√©lula a ser exclu√≠da.
     CELULA *removida;
 
     //Elemento vazio
-    PESSOA removido;
-    strcpy(removido.nome, " ");
-    removido.matricula = -1;
+    PESSOA removido = criarPessoa(" ", -1);
 
-    //Se a lista vazia, ent„o n„o remove.
+    //Se a lista vazia, ent√£o n√£o remove.
     if(listaVazia(lista)){
         printf("\n ERRO: Lista vazia");
         return removido;
@@ -67,7 +65,7 @@ CELULA *pesquisarMatr(CELULA **lista, int mat){
         return NULL;
     }
 
-    auxiliar = (*lista); //Recebe a cabeÁa da lista
+    auxiliar = (*lista); //Recebe a cabe√ßa da lista
     while(auxiliar != NULL){
         if(auxiliar->info.matricula == mat)
             return auxiliar;
@@ -82,7 +80,7 @@ CELULA *pesquisarMatr(CELULA **lista, int mat){
 
 
 PESSOA removerFinal(CELULA **lista){
-    //Armazena o end. do nÛ a ser removido
+    //Armazena o end. do n√≥ a ser removido
     CELULA *removida;
     //Marca a celula que sera a nova ultima
     CELULA *anterior;
@@ -191,7 +189,7 @@ int inserirInicio(CELULA **lista, PESSOA elemento){
         return 0;
     }
     if(listaVazia(lista)){
-        //Ja que est· vazia È equivalente inserir no fim
+        //Ja que est√° vazia √© equivalente inserir no fim
         return inserirFim(lista, elemento);
     }
     //Preenche a nova celula com o elemento
