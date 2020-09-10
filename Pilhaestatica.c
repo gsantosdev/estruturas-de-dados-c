@@ -36,7 +36,7 @@ int push(PILHA *pilha, int elemento){
 }
 
 int pop(PILHA *pilha){
-    int removido = -1; //elem inv·lido
+    int removido = -1; //elem inv√°lido
     if(pilhaVazia(pilha)){
         printf("Nao ha elemento para remover.");
         return removido;
