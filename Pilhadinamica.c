@@ -31,7 +31,7 @@ int acessarTopo(CELULA **pilha){
         return 0;
     }
     CELULA *auxiliar;
-    auxiliar = (*pilha); //Recebe a cabeça da lista
+    auxiliar = (*pilha); //Recebe a cabeÃ§a da lista
     while(auxiliar != NULL){
         if(auxiliar->next == NULL)
             return auxiliar->info;
@@ -69,7 +69,7 @@ int push(CELULA **pilha, int elemento){
 }
 
 int pop(CELULA **pilha){
-    //Armazena o end. do nó a ser removido
+    //Armazena o end. do nÃ³ a ser removido
     CELULA *removida;
     //Marca a celula que sera a nova ultima
     CELULA *anterior;
