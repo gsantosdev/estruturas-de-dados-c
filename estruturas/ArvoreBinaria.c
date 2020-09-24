@@ -63,11 +63,50 @@ int inserir(NO **raiz, int elem)
 
 }
 
+NO *pesquisar (NO *raiz, int elem)
+{
+    if(!raiz) return NULL;
+
+    if(raiz->info == elemento)
+        return raiz;
+    else if(raiz->info > elemento)
+        return pesquisar(raiz->esq, elemento);
+    else
+        return pesquisar(raiz->dir,elemento);
+}
+
+void removerRec(NO **raiz, int elem)
+{
+    NO *aux;
+
+    if(vazia(raiz))
+    {
+        printf(" Arvore vazia!!!\n");
+        return;
+    }
+    if(elemento < (*raiz)->info)
+    {
+        removerRec(&(*raiz)->esq, elemento);
+    }
+    else if(elemento > (*raiz)->info)
+    {
+        removerRec(&(*raiz)->dir, elemento);
+    }
+    else
+    {
+
+    }
+}
+
+
+
 int main(void)
 {
     NO *ptrRaiz;
     inicializar(&ptrRaiz);
     inserir(&ptrRaiz,2);
+
+
 
 
     return 0;
