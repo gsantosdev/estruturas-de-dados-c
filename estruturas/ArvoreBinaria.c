@@ -67,13 +67,30 @@ NO *pesquisar (NO *raiz, int elem)
 {
     if(!raiz) return NULL;
 
-    if(raiz->info == elemento)
+    if(raiz->info == elem)
         return raiz;
-    else if(raiz->info > elemento)
-        return pesquisar(raiz->esq, elemento);
+    else if(raiz->info > elem)
+        return pesquisar(raiz->esq, elem);
     else
-        return pesquisar(raiz->dir,elemento);
+        return pesquisar(raiz->dir,elem);
 }
+
+NO *maiorElemento(NO **no)
+{
+    if((*no)->dir)
+        return maiorElemento(&(*no)->dir);
+    else
+    {
+        NO *aux = *no;
+        if((*no)->esq)
+            *no = (*no)->esq;
+        else
+            *no = NULL;
+        return aux;
+    }
+}
+
+
 
 void removerRec(NO **raiz, int elem)
 {
@@ -84,16 +101,50 @@ void removerRec(NO **raiz, int elem)
         printf(" Arvore vazia!!!\n");
         return;
     }
-    if(elemento < (*raiz)->info)
+    if(elem < (*raiz)->info)
     {
-        removerRec(&(*raiz)->esq, elemento);
+        removerRec(&(*raiz)->esq, elem);
     }
-    else if(elemento > (*raiz)->info)
+    else if(elem > (*raiz)->info)
     {
-        removerRec(&(*raiz)->dir, elemento);
+        removerRec(&(*raiz)->dir, elem);
     }
     else
     {
+        aux = *raiz;
+        //caso 1 - o nó é folha
+        if((*raiz)->esq == NULL && ((*raiz)->dir == NULL))
+        {
+            free(aux);
+            (*raiz) = NULL;
+        }
+        else //caso 2 dir
+        {
+            if((*raiz)->esq == NULL)
+            {
+                (*raiz) = (*raiz)->dir;
+                aux->dir = NULL;
+                free(aux);
+            }
+            else //caso 2 esq
+            {
+                if((*raiz)->dir == NULL)
+                {
+                    (*raiz) = (*raiz)->esq;
+                    aux->esq = NULL;
+                    free(aux);
+                }
+                else
+                {
+                    aux = maiorElemento(&(*raiz)->esq);
+                    aux->esq = (*raiz)->esq;
+                    aux->dir = (*raiz)->dir;
+                    free((*raiz));
+                    *raiz = aux;
+                }
+            }
+        }
+
 
     }
 }
