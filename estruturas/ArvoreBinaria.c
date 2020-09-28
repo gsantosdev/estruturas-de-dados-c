@@ -63,6 +63,17 @@ int inserir(NO **raiz, int elem)
 
 }
 
+int inserirRec(NO **raiz, int elem)
+{
+    if(!(*raiz))
+        (*raiz) = novoNo(elem);
+    else if(elem >= (*raiz)->info)
+        inserirRec(&(*raiz)->dir, elem);
+    else
+        inserirRec(&(*raiz)->esq, elem);
+    return 1;
+}
+
 NO *pesquisar (NO *raiz, int elem)
 {
     if(!raiz) return NULL;
@@ -90,7 +101,66 @@ NO *maiorElemento(NO **no)
     }
 }
 
+void remover(NO **raiz, int elem)
+{
+    NO *aux;
+    NO *rmv;
+    NO *anterior = NULL;
 
+    if(vazia(raiz))
+    {
+        printf(" Arvore vazia!!!\n");
+        return;
+    }
+
+
+    rmv = (*raiz);
+    while(rmv->info != elem || rmv != NULL)
+    {
+        anterior = rmv;
+        if(elem > rmv->info)
+            rmv = rmv->dir;
+        else
+            rmv = rmv->esq;
+    }
+    if(rmv)
+    {
+        aux = rmv;
+        if(!rmv->dir && !rmv->esq)
+            free(rmv);
+        else
+        {
+            if(!rmv->esq)
+            {
+                rmv = rmv->dir;
+                aux->dir = NULL;
+                free(aux);
+            }
+            else
+            {
+                if(!rmv->dir)
+                {
+                    rmv = rmv->esq;
+                    aux->dir = NULL;
+                    free(aux);
+                }
+                else
+                {
+
+                }
+            }
+        }
+        if(anterior->info >= elem)
+            anterior->dir = NULL;
+        else
+            anterior->esq = NULL;
+    }
+    else
+    {
+        printf("Elemento nao encontrado!");
+        return;
+    }
+}
 
 void removerRec(NO **raiz, int elem)
 {
