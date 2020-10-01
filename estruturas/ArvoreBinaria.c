@@ -28,9 +28,9 @@ NO *novoNo(int elem){
 
 }
 
-int vazia(NO *raiz)
+int vazia(NO **raiz)
 {
-    return !raiz;
+    return !(*raiz);
 }
 
 int inserir(NO **raiz, int elem)
@@ -39,7 +39,7 @@ int inserir(NO **raiz, int elem)
     novo = novoNo(elem);
     if(!novo) return 0;
 
-    if(vazia(*raiz))
+    if(vazia(raiz))
     {
         (*raiz) = novo;
         return 1;
@@ -219,16 +219,28 @@ void removerRec(NO **raiz, int elem)
     }
 }
 
+void imprimirFolhinha(NO *raiz)
+{
+    if(raiz == NULL)
+        return;
+    if(raiz->dir == NULL && raiz->esq == NULL)
+    {
+        printf("%d ", raiz->info);
+        return;
+    }
+    imprimirFolhinha(raiz->esq);
+    imprimirFolhinha(raiz->dir);
+}
 
 
 int main(void)
 {
     NO *ptrRaiz;
     inicializar(&ptrRaiz);
-    inserir(&ptrRaiz,2);
-
-
-
+    inserir(&ptrRaiz,5);
+    inserir(&ptrRaiz,3);
+    inserir(&ptrRaiz,6);
+    imprimirFolhinha(ptrRaiz);
 
     return 0;
 }
