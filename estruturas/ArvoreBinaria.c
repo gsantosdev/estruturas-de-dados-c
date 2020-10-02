@@ -101,55 +101,27 @@ NO *maiorElemento(NO **no)
     }
 }
 
-void removerNo(NO *no)
+NO *maiorEl(NO **raiz)
 {
+    while ((*raiz)->dir)
+        (*raiz) = (*raiz)->dir;
 
-    free(no);
-/*
-    NO *rmv;
-    rmv = (*no);
-        //caso 1 - o nó é folha
-    if((*no)->esq == NULL && (*no)->dir == NULL)
-    {
-        free(rmv);
-        (*no) = NULL;
-    }
-    else //caso 2 dir
-    {
-        if((*no)->esq == NULL)
-        {
-            (*no) = (*no)->dir;
-            rmv->dir = NULL;
-            free(rmv);
-        }
-        else //caso 2 esq
-        {
-            if((*no)->dir == NULL)
-            {
-                (*no) = (*no)->esq;
-                rmv->esq = NULL;
-                free(rmv);
-            }
-            else
-            {
-
-            }
-        }
-    }
-    */
+    return (*raiz);
 }
 
 void remover(NO **raiz, int elem)
 {
     NO *aux;
-    NO *anterior;
+    NO *anterior = NULL;
 
     if(vazia(raiz))
     {
         printf(" Arvore vazia!!!\n");
         return;
     }
+
     aux = (*raiz);
+
     while(aux != NULL)
     {
         if (elem > aux->info){
@@ -162,6 +134,8 @@ void remover(NO **raiz, int elem)
         }
         else
         {
+            NO *aux1;
+            aux1 = aux;
             if(aux->esq == NULL && aux->dir == NULL)
             {
                 if (aux->info < anterior->info)
@@ -186,7 +160,9 @@ void remover(NO **raiz, int elem)
                     }
                     else
                     {
-
+                        aux1 = maiorElemento(&aux->esq);
+                        //printf("%d", aux1->info);
+                        aux->info = aux1->info;
                     }
                 }
             }
@@ -194,20 +170,13 @@ void remover(NO **raiz, int elem)
 
         }
     }
-    printf("\n%d ", anterior->info);
-    printf("\n%p ", aux->dir);
-    printf("\n%p \n", aux->esq);
-
+    //printf("\n%d ", anterior->info);
+    //printf("\n%p ", aux->dir);
+    //printf("\n%p \n", aux->esq);
     //free(aux);
 }
 
-NO *maiorEl(NO *raiz)
-{
-    while (raiz->dir)
-    {
-        raiz = raiz->dir;
-    }
-}
+
 
 void removerRec(NO **raiz, int elem)
 {
@@ -314,7 +283,9 @@ int main(void)
     inserir(&ptrRaiz,5);
     inserir(&ptrRaiz,21);
     imprimirArvore(ptrRaiz);
-    remover(&ptrRaiz,21);
+    printf("\n");
+    remover(&ptrRaiz,18);
+    printf("\n");
     imprimirArvore(ptrRaiz);
 
     limparArvore(ptrRaiz);
