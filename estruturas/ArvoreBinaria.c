@@ -101,66 +101,111 @@ NO *maiorElemento(NO **no)
     }
 }
 
+void removerNo(NO *no)
+{
+
+    free(no);
+/*
+    NO *rmv;
+    rmv = (*no);
+        //caso 1 - o nó é folha
+    if((*no)->esq == NULL && (*no)->dir == NULL)
+    {
+        free(rmv);
+        (*no) = NULL;
+    }
+    else //caso 2 dir
+    {
+        if((*no)->esq == NULL)
+        {
+            (*no) = (*no)->dir;
+            rmv->dir = NULL;
+            free(rmv);
+        }
+        else //caso 2 esq
+        {
+            if((*no)->dir == NULL)
+            {
+                (*no) = (*no)->esq;
+                rmv->esq = NULL;
+                free(rmv);
+            }
+            else
+            {
+
+            }
+        }
+    }
+    */
+}
+
 void remover(NO **raiz, int elem)
 {
     NO *aux;
-    NO *rmv;
-    NO *anterior = NULL;
+    NO *anterior;
 
     if(vazia(raiz))
     {
         printf(" Arvore vazia!!!\n");
         return;
     }
-
-
-    rmv = (*raiz);
-
-    while(rmv->info != elem || rmv == NULL)
+    aux = (*raiz);
+    while(aux != NULL)
     {
-        anterior = rmv;
-        if(elem > rmv->info)
-            rmv = rmv->dir;
-        else
-            rmv = rmv->esq;
-    }
-
-    if(rmv)
-    {
-        aux = rmv;
-        if(!rmv->dir && !rmv->esq){
-            free(aux);
-            printf("1 caso");
+        if (elem > aux->info){
+            anterior = aux;
+            aux = aux->dir;
+        }
+        else if (elem < aux->info){
+            anterior = aux;
+            aux = aux->esq;
         }
         else
         {
-            if(rmv->esq == NULL)
+            if(aux->esq == NULL && aux->dir == NULL)
             {
+                if (aux->info < anterior->info)
+                    anterior->esq = NULL;
+                else
+                    anterior->dir = NULL;
+                free(aux);
             }
             else
             {
-                if(rmv->dir == NULL)
+                if (!aux->dir)
                 {
+                    anterior->esq = aux->esq;
+                    free(aux);
                 }
                 else
                 {
-                    rmv = maiorElemento(&(rmv->esq));
-                    rmv->dir = aux->dir;
-                    rmv->esq = aux->esq;
-                    free(aux);
+                    if (!aux->esq)
+                    {
+                        anterior->dir = aux->dir;
+                        free(aux);
+                    }
+                    else
+                    {
+
+                    }
                 }
             }
+            break;
 
         }
-        if(anterior->dir == rmv)
-            anterior->dir = NULL;
-        else
-            anterior->esq = NULL;
     }
-    else
+    printf("\n%d ", anterior->info);
+    printf("\n%p ", aux->dir);
+    printf("\n%p \n", aux->esq);
+
+    //free(aux);
+}
+
+NO *maiorEl(NO *raiz)
+{
+    while (raiz->dir)
     {
-        printf("Elemento nao encontrado!");
-        return;
+        raiz = raiz->dir;
     }
 }
 
@@ -238,9 +283,17 @@ void imprimirArvore(NO *raiz)
 {
     if(raiz == NULL)
         return;
+    imprimirArvore(raiz->dir);
     printf("%d ", raiz->info);
     imprimirArvore(raiz->esq);
-    imprimirArvore(raiz->dir);
+}
+void limparArvore(NO *raiz)
+{
+    if(raiz == NULL)
+        return;
+    limparArvore(raiz->esq);
+    limparArvore(raiz->dir);
+    free(raiz);
 }
 
 
@@ -248,16 +301,22 @@ int main(void)
 {
     NO *ptrRaiz;
     inicializar(&ptrRaiz);
-    inserir(&ptrRaiz,15);
-    inserir(&ptrRaiz,5);
+    inserir(&ptrRaiz,14);
+    inserir(&ptrRaiz,4);
+    inserir(&ptrRaiz,18);
     inserir(&ptrRaiz,20);
-    inserir(&ptrRaiz,3);
-    inserir(&ptrRaiz,9);
     inserir(&ptrRaiz,16);
+    inserir(&ptrRaiz,9);
+    inserir(&ptrRaiz,3);
     inserir(&ptrRaiz,7);
+    inserir(&ptrRaiz,15);
     inserir(&ptrRaiz,17);
-    remover(&ptrRaiz,9);
+    inserir(&ptrRaiz,5);
+    inserir(&ptrRaiz,21);
+    imprimirArvore(ptrRaiz);
+    remover(&ptrRaiz,21);
     imprimirArvore(ptrRaiz);
 
+    limparArvore(ptrRaiz);
     return 0;
 }
