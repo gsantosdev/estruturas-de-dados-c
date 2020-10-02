@@ -115,7 +115,8 @@ void remover(NO **raiz, int elem)
 
 
     rmv = (*raiz);
-    while(rmv->info != elem || rmv != NULL)
+
+    while(rmv->info != elem || rmv == NULL)
     {
         anterior = rmv;
         if(elem > rmv->info)
@@ -123,34 +124,35 @@ void remover(NO **raiz, int elem)
         else
             rmv = rmv->esq;
     }
+
     if(rmv)
     {
         aux = rmv;
-        if(!rmv->dir && !rmv->esq)
-            free(rmv);
+        if(!rmv->dir && !rmv->esq){
+            free(aux);
+            printf("1 caso");
+        }
         else
         {
-            if(!rmv->esq)
+            if(rmv->esq == NULL)
             {
-                rmv = rmv->dir;
-                aux->dir = NULL;
-                free(aux);
             }
             else
             {
-                if(!rmv->dir)
+                if(rmv->dir == NULL)
                 {
-                    rmv = rmv->esq;
-                    aux->dir = NULL;
-                    free(aux);
                 }
                 else
                 {
-
+                    rmv = maiorElemento(&(rmv->esq));
+                    rmv->dir = aux->dir;
+                    rmv->esq = aux->esq;
+                    free(aux);
                 }
             }
+
         }
-        if(anterior->info >= elem)
+        if(anterior->dir == rmv)
             anterior->dir = NULL;
         else
             anterior->esq = NULL;
@@ -232,15 +234,30 @@ void imprimirFolhinha(NO *raiz)
     imprimirFolhinha(raiz->dir);
 }
 
+void imprimirArvore(NO *raiz)
+{
+    if(raiz == NULL)
+        return;
+    printf("%d ", raiz->info);
+    imprimirArvore(raiz->esq);
+    imprimirArvore(raiz->dir);
+}
+
 
 int main(void)
 {
     NO *ptrRaiz;
     inicializar(&ptrRaiz);
+    inserir(&ptrRaiz,15);
     inserir(&ptrRaiz,5);
+    inserir(&ptrRaiz,20);
     inserir(&ptrRaiz,3);
-    inserir(&ptrRaiz,6);
-    imprimirFolhinha(ptrRaiz);
+    inserir(&ptrRaiz,9);
+    inserir(&ptrRaiz,16);
+    inserir(&ptrRaiz,7);
+    inserir(&ptrRaiz,17);
+    remover(&ptrRaiz,9);
+    imprimirArvore(ptrRaiz);
 
     return 0;
 }
