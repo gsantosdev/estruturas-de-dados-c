@@ -103,10 +103,14 @@ NO *maiorElemento(NO **no)
 
 NO *maiorEl(NO **raiz)
 {
-    while ((*raiz)->dir)
-        (*raiz) = (*raiz)->dir;
+    NO *aux;
+    aux = *raiz;
 
-    return (*raiz);
+    while (!aux)
+        aux = aux->dir;
+
+
+    return aux;
 }
 
 void remover(NO **raiz, int elem)
@@ -135,7 +139,6 @@ void remover(NO **raiz, int elem)
         else
         {
             NO *aux1;
-            aux1 = aux;
             if(aux->esq == NULL && aux->dir == NULL)
             {
                 if (aux->info < anterior->info)
@@ -160,9 +163,28 @@ void remover(NO **raiz, int elem)
                     }
                     else
                     {
-                        aux1 = maiorElemento(&aux->esq);
-                        //printf("%d", aux1->info);
-                        aux->info = aux1->info;
+                        if (aux->info >= anterior->info)
+                        {
+                            aux1 = maiorEl(&aux->esq);
+                            printf("%d", aux1->info);
+                            //printf("%d", anterior->info);
+                            if (aux1->dir)
+                               aux1->dir->dir = aux->dir;
+                            else
+                                aux1->dir = aux->dir;
+                            if (aux1->esq)
+                                aux1->dir->esq = aux->esq;
+                            else
+                                aux1->esq = aux->esq;
+                            anterior->dir = aux1->dir;
+                            aux1->dir = NULL;
+                            free(aux);
+                        }
+                        else if (aux->info < anterior->info)
+                        {
+
+                        }
+
                     }
                 }
             }
@@ -282,6 +304,7 @@ int main(void)
     inserir(&ptrRaiz,17);
     inserir(&ptrRaiz,5);
     inserir(&ptrRaiz,21);
+    inserir(&ptrRaiz,2);
     imprimirArvore(ptrRaiz);
     printf("\n");
     remover(&ptrRaiz,18);
