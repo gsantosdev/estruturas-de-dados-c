@@ -63,6 +63,7 @@ int inserir(NO **raiz, int elem)
 
 }
 
+//EX 1
 int inserirRec(NO **raiz, int elem)
 {
     if(!(*raiz))
@@ -105,14 +106,38 @@ NO *maiorEl(NO **raiz)
 {
     NO *aux;
     aux = *raiz;
-
-    while (!aux)
+    while (aux->dir)
+    {
         aux = aux->dir;
-
-
-    return aux;
+    }
+    NO *aux1 = aux;
+    if(aux->esq)
+    {
+        aux = aux->esq;
+        printf("sim");
+    }
+    else
+        aux = NULL;
+    return aux1;
 }
 
+
+NO *anteriorMaiorEl(NO **raiz)
+{
+    NO *aux;
+    NO *aux2;
+    aux = *raiz;
+    aux2 = aux;
+    while (aux->dir)
+    {
+        aux2 = aux;
+        aux = aux->dir;
+    }
+    return aux2;
+
+}
+
+//EX 2
 void remover(NO **raiz, int elem)
 {
     NO *aux;
@@ -139,6 +164,7 @@ void remover(NO **raiz, int elem)
         else
         {
             NO *aux1;
+            NO *aux2;
             if(aux->esq == NULL && aux->dir == NULL)
             {
                 if (aux->info < anterior->info)
@@ -163,39 +189,45 @@ void remover(NO **raiz, int elem)
                     }
                     else
                     {
-                        if (aux->info >= anterior->info)
+                        aux2 = anteriorMaiorEl(&aux->esq);
+                        aux1 = maiorEl(&aux->esq);
+                        printf("%d ",aux2->info);
+                        if (anterior == NULL)
                         {
-                            aux1 = maiorEl(&aux->esq);
-                            printf("%d", aux1->info);
-                            //printf("%d", anterior->info);
-                            if (aux1->dir)
-                               aux1->dir->dir = aux->dir;
-                            else
+                           aux->info = aux1->info;
+                           aux2->dir = aux1->esq;
+                           free(aux1);
+
+                        }
+                        else if (anterior->dir->info == aux->info)
+                        {
+                            if (aux1 != aux2)
+                            {
                                 aux1->dir = aux->dir;
-                            if (aux1->esq)
-                                aux1->dir->esq = aux->esq;
-                            else
+                                aux2->dir = NULL;
+                            }
+                            aux1->esq = aux->esq;
+                            anterior->dir = aux1;
+                            free(aux);
+
+                        }
+                        else if (anterior->esq->info == aux->info)
+                        {
+                            if (aux1 != aux2)
+                            {
                                 aux1->esq = aux->esq;
-                            anterior->dir = aux1->dir;
-                            aux1->dir = NULL;
+                                aux2->dir = NULL;
+                            }
+                            aux1->dir = aux->dir;
+                            anterior->esq = aux1;
                             free(aux);
                         }
-                        else if (aux->info < anterior->info)
-                        {
-
-                        }
-
                     }
                 }
             }
             break;
-
         }
     }
-    //printf("\n%d ", anterior->info);
-    //printf("\n%p ", aux->dir);
-    //printf("\n%p \n", aux->esq);
-    //free(aux);
 }
 
 
@@ -307,7 +339,7 @@ int main(void)
     inserir(&ptrRaiz,2);
     imprimirArvore(ptrRaiz);
     printf("\n");
-    remover(&ptrRaiz,18);
+    remover(&ptrRaiz,14);
     printf("\n");
     imprimirArvore(ptrRaiz);
 
