@@ -3,13 +3,13 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <float.h>
 
 #define lbuffer() while(getchar() != '\n')
 
 #define bool int
 #define true 1
 #define false 0
-
 
 
 
@@ -29,9 +29,92 @@ typedef struct grafo
     CIDADE *cidades;
 } GRAFO;
 
+typedef struct vetores
+{
+    float *d;
+    int *p;
+    int *aberto;
+} VETORES;
+
+
+void inicializaD(int Ncidades, VETORES *vetores, int inicial)
+{
+    int i;
+
+    vetores->d = (float *) malloc(Ncidades * sizeof(float));
+    vetores->p = (int *) malloc(Ncidades * sizeof(int));
+    vetores->aberto = (bool *) malloc(Ncidades *sizeof(bool));
+
+    for (i = 0;i < Ncidades; i++)
+    {
+        vetores->d[i] = FLT_MAX / 2;
+        vetores->p[i] = -1;
+        vetores->aberto[i] = true;
+    }
+    vetores->d[inicial] = 0;
+}
+
+void relaxa(GRAFO *g, VETORES *vetores, int origem)
+{
+    int i;
+
+    for(i = 0; i < g->Ncidades; i++)
+    {
+        if (g->caminhos[origem][i])
+        {
+            if (vetores->d[i] > vetores->d[origem] + g->caminhos[origem][i])
+            {
+                vetores->d[i] = vetores->d[origem] + g->caminhos[origem][i];
+                vetores->p[i] = origem;
+
+            }
+        }
+    }
+
+}
+
+bool existeAberto(int Ncidades, VETORES *vetores)
+{
+    int i;
+    for (i = 0; i < Ncidades; i++)
+        if (vetores->aberto[i]) return true;
+    return false;
+
+}
+
+int menorDist(GRAFO *g, VETORES *vetores)
+{
+    int i;
+    for (i = 0; i < g->Ncidades; i++)
+        if (vetores->aberto[i]) break;
+    if (i == g->Ncidades) return -1;
+    int menor = i;
+    for (i = menor + 1; i < g->Ncidades; i++)
+        if (vetores->aberto[i] && (vetores->d[menor] > vetores->d[i]))
+            menor = i;
+    return menor;
+}
 
 
 
+float *dijkstra(GRAFO *g, int inicial, VETORES *vetores)
+{
+    inicializaD(g->Ncidades, vetores, inicial);
+
+    int i;
+
+    while (existeAberto(g->Ncidades, vetores))
+    {
+        int u = menorDist(g, vetores);
+        if (u == -1) break;
+        vetores->aberto[u] = false;
+        relaxa(g, vetores, u);
+    }
+
+
+    return vetores->d;
+
+}
 
 
 GRAFO *criaGrafo(int Ncidades)
@@ -107,8 +190,6 @@ int lerPorcentagem()
 bool haCaminho(GRAFO *g, int origem, int destino)
 {
     return g->caminhos[origem][destino];
-
-
 }
 
 void criarCaminho(GRAFO *g, int origem, int destino)
@@ -163,30 +244,61 @@ void imprimirMatriz(GRAFO *g)
     }
 }
 
-
-
-
-
-
-
-
-
-
-
 int main(void)
 {
     GRAFO *grafo;
-    int porcentagem;
+    int porcentagem, op, i;
+    char cidade1 [30],cidade2 [30];
+
+    VETORES *vetores = (VETORES *) malloc(sizeof(VETORES));
 
     criarCidades(&grafo);
     porcentagem = lerPorcentagem();
     gerarCaminhos(grafo, porcentagem);
 
+    do
+    {
+        printf("Selecione a opcao desejada: \n");
+        printf("1 - Caminho minimo entre cidades\n");
+        printf("0 - Sair\n");
+        op = getchar();
+        if (op)
+        {
+            printf("Digite a cidade origem: \n");
+            lbuffer();
+            scanf("%s", &cidade1);
+            for (i = 0; i < grafo->Ncidades; i++)
+            {
+
+            }
+            printf("Digite a cidade destino: \n");
+            lbuffer();
+            scanf("%s", &cidade2);
+            printf("1 - Caminho minimo entre cidades\n");
+
+
+        }
+
+    } while (op);
+
     imprimirMatriz(grafo);
 
+    float *r = dijkstra(grafo,0,vetores);
 
+    int i;
 
+    for (i = 0; i < grafo->Ncidades; i++)
+    {
+        printf("D %f\n",r[i]);
+    }
 
+    printf("\n");
+
+    for (i = 0; i < grafo->Ncidades; i++)
+    {
+        printf("P %d\n",vetores->p[i]);
+    }
+    //170141173319264430000000000000000000000.000000
 
     return 0;
 }
