@@ -97,7 +97,7 @@ int menorDist(GRAFO *g, VETORES *vetores)
 
 
 
-float *dijkstra(GRAFO *g, int inicial, VETORES *vetores)
+void *dijkstra(GRAFO *g, int inicial, VETORES *vetores)
 {
     inicializaD(g->Ncidades, vetores, inicial);
 
@@ -110,9 +110,6 @@ float *dijkstra(GRAFO *g, int inicial, VETORES *vetores)
         vetores->aberto[u] = false;
         relaxa(g, vetores, u);
     }
-
-
-    return vetores->d;
 
 }
 
@@ -152,8 +149,11 @@ void criarCidades(GRAFO **g)
     int Ncidades;
     int i;
 
-    printf("Insira o numero de cidades: ");
-    scanf("%d", &Ncidades);
+    do
+    {
+        printf("Insira o numero de cidades [10, 50]: ");
+        scanf("%d", &Ncidades);
+    } while(Ncidades < 10 || Ncidades > 50);
     printf("\n");
 
     *g = criaGrafo(Ncidades);
@@ -162,7 +162,7 @@ void criarCidades(GRAFO **g)
     {
         lbuffer();
         printf("Insira o nome da %da. cidade: ", i + 1);
-        scanf("%s", (*g)->cidades[i].nome);
+        scanf("%[^\n]", (*g)->cidades[i].nome);
         printf("Insira a posicao x da %da. cidade: ", i + 1);
         scanf("%f", &(*g)->cidades[i].x);
         printf("Insira a posicao y da %da. cidade: ", i + 1);
@@ -244,61 +244,114 @@ void imprimirMatriz(GRAFO *g)
     }
 }
 
+int retornaIndice(GRAFO *g, char *cidade)
+{
+    int i;
+
+    for (i = 0; i < g->Ncidades; i++)
+        if (!strcmp(cidade,g->cidades[i].nome))
+            return i;
+
+    return -1;
+}
+
+void imprimirCaminho (GRAFO *g, int origem, int atual, VETORES *vetores)
+{
+    if (atual == origem)
+    {
+        printf("%s", g->cidades[atual].nome);
+        return;
+    }
+
+    imprimirCaminho(g, origem, vetores->p[atual], vetores);
+
+    printf("->");
+
+    printf("%s", g->cidades[atual].nome);
+
+
+
+
+}
+
+void imprimirAdj(GRAFO *g)
+{
+    int i, j;
+
+    for (i = 0; i < g->Ncidades; i++)
+    {
+        printf("\n%s-> ", g->cidades[i].nome);
+        for (j = 0; j < g->Ncidades; j++)
+        {
+            if (g->caminhos[i][j])
+            {
+                printf("%s; ", g->cidades[j].nome);
+            }
+        }
+        printf("\n");
+    }
+}
+
+
 int main(void)
 {
     GRAFO *grafo;
-    int porcentagem, op, i;
-    char cidade1 [30],cidade2 [30];
+    int porcentagem, op, origem, destino, i, j;
+    char cidade1 [30], cidade2 [30];
 
     VETORES *vetores = (VETORES *) malloc(sizeof(VETORES));
 
     criarCidades(&grafo);
     porcentagem = lerPorcentagem();
     gerarCaminhos(grafo, porcentagem);
-
     do
     {
+        printf("\n\n");
         printf("Selecione a opcao desejada: \n");
         printf("1 - Caminho minimo entre cidades\n");
+        printf("2 - Lista de adjacencia\n");
         printf("0 - Sair\n");
-        op = getchar();
-        if (op)
+        scanf("%d",&op);
+        if (op == 1)
         {
-            printf("Digite a cidade origem: \n");
-            lbuffer();
-            scanf("%s", &cidade1);
-            for (i = 0; i < grafo->Ncidades; i++)
+            printf("\n");
+            do
             {
+                lbuffer();
+                printf("Digite a cidade origem: ");
+                scanf("%[^\n]", &cidade1);
+            } while(retornaIndice(grafo, cidade1) == -1);
+
+            origem = retornaIndice(grafo, cidade1);
+
+            do
+            {
+                lbuffer();
+                printf("Digite a cidade destino: ");
+                scanf("%[^\n]", &cidade2);
+            } while(retornaIndice(grafo, cidade2) == -1);
+
+            destino = retornaIndice(grafo, cidade2);
+
+            dijkstra(grafo, origem, vetores);
+            if (vetores->d[destino] != FLT_MAX / 2)
+            {
+                printf("Caminho: ");
+                imprimirCaminho(grafo, origem, destino, vetores);
+                printf("\nValor total da distancia entre as cidades: %.3f\n", vetores->d[destino]);
 
             }
-            printf("Digite a cidade destino: \n");
-            lbuffer();
-            scanf("%s", &cidade2);
-            printf("1 - Caminho minimo entre cidades\n");
-
-
+            else
+                printf("Nao ha caminho ate a cidade destino\n");
+        }
+        else if (op == 2)
+        {
+            imprimirAdj(grafo);
         }
 
     } while (op);
 
-    imprimirMatriz(grafo);
 
-    float *r = dijkstra(grafo,0,vetores);
-
-    int i;
-
-    for (i = 0; i < grafo->Ncidades; i++)
-    {
-        printf("D %f\n",r[i]);
-    }
-
-    printf("\n");
-
-    for (i = 0; i < grafo->Ncidades; i++)
-    {
-        printf("P %d\n",vetores->p[i]);
-    }
-    //170141173319264430000000000000000000000.000000
 
     return 0;
 }
